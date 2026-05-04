@@ -1,0 +1,10 @@
+myenv/
+db/
+__pycache__/
+*.pyc
+.vscode/
+.env
+.chroma/
+.chroma.sqlite3
+.DS_Store
+*.sqlite3
