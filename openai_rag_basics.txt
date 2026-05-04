@@ -1,0 +1,97 @@
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+client=OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+response=client.embeddings.create(
+    input="hi my name is roopal",model="text-embedding-3-small"
+)
+print(response.data[0].embedding)
+
+
+
+1. Import libraries
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+
+OpenAI → Python client used to call the OpenAI API.
+os → lets Python read environment variables.
+load_dotenv → loads variables stored in a .env file.
+
+2. Load the .env file
+load_dotenv()
+Reads the .env file in your project folder.
+This file usually contains something like:
+OPENAI_API_KEY=sk-xxxxxxxx
+
+3. Create OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+os.getenv("OPENAI_API_KEY") reads the API key from the environment.
+The key is passed to OpenAI() so the program can authenticate with the OpenAI API.
+
+4. Generate an embedding
+
+response = client.embeddings.create(
+    input="hi my name is roopal",
+    model="text-embedding-3-small"
+)
+
+This sends a request to OpenAI:
+Input text: "hi my name is roopal"
+Model: text-embedding-3-small
+The model converts the sentence into a vector (list of numbers) representing its meaning.
+Example (simplified):
+[0.021, -0.44, 0.13, 0.77, -0.09, ...]
+This vector is called an embedding.
+
+5. Print the embedding vector
+print(response.data[0].embedding)
+The API returns a structured response like:
+response
+ └── data
+      └── [0]
+           └── embedding
+data[0] → first embedding result
+.embedding → the vector itself
+So this prints the numerical representation of the sentence.
+
+What the program does overall
+
+Loads your API key.
+Sends text to an embedding model.
+Converts the text into a high-dimensional vector.
+Prints the vector.
+In short:
+Text → Embedding model → Numerical vector representing meaning
+
+
+
+
+
+
+
+
+import chromadb
+import os
+from dotenv import load_dotenv
+
+from chromadb.utils import embedding_functions
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+default_ef = embedding_functions.DefaultEmbeddingFunction()
+openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+    api_key=openai_api_key, model_name="text-embedding-3-small"
+)
+croma_client = chromadb.PersistentClient(path="./db/chroma_persist")
+
+collection = croma_client.get_or_create_collection(
+    "my_story",
+    embedding_function=openai_ef,
+)
+<rest same>
+This version differs mainly in how embeddings are generated and how the API key is handled. Previously, embeddings were produced using Chroma’s local default embedding model, but now the code switches to OpenAI’s embedding model text-embedding-3-small, which requires an API key. The program therefore loads environment variables from a .env file using python-dotenv, retrieves the OPENAI_API_KEY, and uses it to create an OpenAIEmbeddingFunction. As a result, document embeddings and query embeddings are generated through the OpenAI API instead of locally, meaning the model runs remotely and may incur API usage costs. The rest of the setup remains similar: the database is still a persistent Chroma database stored on disk, and a collection ("my_story") is created or loaded to store and search embeddings.

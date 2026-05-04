@@ -1,0 +1,217 @@
+Detailed Notes – Tokens & Context Windows (IBM Technology)
+1. Why Context Windows Matter
+Large Language Models (LLMs) like ChatGPT process information in limited chunks of text.
+This limit is called the context window.
+
+The context window determines:
+How much text the model can read at once.
+How much of a conversation it can remember.
+How large a document it can analyze.
+If the input exceeds this limit, the extra information is removed or summarized.
+
+Example
+
+If a model has a 4096 token context window:
+It can only process the most recent 4096 tokens of conversation or text.
+
+2. What Are Tokens?
+Definition
+Tokens are the basic units of text that LLMs process.
+Models do not read words or characters directly.
+Instead, they process:
+text → tokens → token IDs → neural network processing
+
+Tokens can be:
+A whole word
+A part of a word
+A single character
+Sometimes multiple characters
+Examples:
+Text	Possible Tokens
+"Hello"	"Hello"
+"playing"	"play" + "ing"
+"can't"	"can" + "'t"
+
+LLMs convert tokens into numbers (token IDs) for computation.
+
+3. Words vs Tokens
+
+Words and tokens are not the same thing.
+
+Approximate rule:
+1 token ≈ 0.75 words
+or
+1 word ≈ 1.3 tokens
+
+Example sentence:
+
+"ChatGPT is amazing."
+
+Possible tokenization:
+
+Chat | GPT | is | amazing | .
+
+Tokens depend on the tokenizer used by the model.
+
+4. What Is a Context Window?
+Definition
+
+The context window is the maximum number of tokens an LLM can consider at one time.
+It acts like the model’s working memory.
+The model uses this window to understand:
+prompts
+conversation history
+instructions
+retrieved documents
+its own generated output
+
+5. What Takes Up Context Window Space
+
+The context window is not only the user prompt.
+It also includes:
+System prompt (hidden instructions)
+Conversation history
+User input
+Retrieved documents (RAG)
+Model-generated responses
+Formatting tokens
+All of these consume tokens.
+
+6. Example of Context Window Usage
+
+Suppose a model has 8000 tokens.
+
+Conversation example:
+
+Content	Tokens
+System prompt	1000
+Conversation history	3000
+User prompt	2000
+Model response	2000
+
+Total = 8000 tokens
+
+If the conversation grows further:
+
+older messages are removed from context.
+
+7. Why Context Windows Exist
+
+LLMs are based on the Transformer architecture.
+
+Transformers use self-attention, which compares every token with every other token.
+
+The computational cost grows quickly:
+
+Compute cost ∝ tokens²
+
+Example:
+
+Tokens	Compute
+1000	1x
+2000	4x
+4000	16x
+
+Because of this, context windows cannot be unlimited.
+
+8. What Happens When Context Window Is Exceeded
+
+If input is too long:
+
+The model truncates earlier text
+
+Important information may be lost
+
+The model might give incorrect responses
+
+This is why long conversations sometimes cause the model to forget earlier details.
+
+9. Evolution of Context Window Sizes
+
+Context windows have grown quickly.
+
+Examples:
+
+Model	Context Window
+GPT-3	2048 tokens
+GPT-3.5	4096 tokens
+GPT-4	8k – 128k tokens
+Gemini 1.5	up to 2M tokens
+
+Larger windows allow:
+
+longer documents
+
+longer conversations
+
+better reasoning over large data.
+
+10. Trade-offs of Large Context Windows
+
+Advantages:
+
+Handles long documents
+
+More accurate responses
+
+Less forgetting in conversations
+
+Disadvantages:
+
+Higher compute cost
+
+Slower responses
+
+Higher API costs
+
+Harder for model to focus on relevant information
+
+11. Context Window and RAG
+
+To work around context limits, systems use:
+
+RAG (Retrieval Augmented Generation)
+
+Steps:
+
+User asks question
+
+System retrieves relevant documents
+
+Only important chunks are added to context window
+
+Model generates answer
+
+This avoids putting entire databases into context.
+
+12. Practical Example
+
+Imagine asking an AI:
+
+Summarize this 200-page PDF.
+
+Without RAG:
+
+Too large for context window.
+
+With RAG:
+
+Document is split into small chunks
+
+Relevant chunks are retrieved
+
+Only those chunks are placed into the context window.
+
+13. Key Takeaways
+
+LLMs process tokens, not words.
+
+Tokens are converted to numeric IDs.
+
+A context window is the maximum number of tokens the model can process.
+
+It determines how much the model can remember at once.
+
+Larger context windows improve capability but increase computational cost.
+
+Systems like RAG help overcome context limitations
